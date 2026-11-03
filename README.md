@@ -2,33 +2,22 @@
 
 Six random albums from your Tidal collection to start the day. Tap any that suit your mood to keep them and fill the rest with more like them, or press Play to open one in Tidal. Albums you’ve seen today don’t come back until tomorrow.
 
-It’s a static page with no build step. Your Tidal login and album list stay in your browser’s local storage.
+Live at <https://castux.github.io/side-a/>. A static page with no build step and no dependencies; your Tidal login and album list stay in your browser.
 
-## Try it
+## Run it
 
 ```sh
-npm run dev        # or any static server; ES modules don't load from file://
+npm run dev   # serves on http://localhost:8000; ES modules don't load from file://
+npm test
 ```
 
-Open <http://localhost:8000/?demo> for 66 sample albums.
+Open <http://localhost:8000/?demo> for sample albums.
 
-## Use your Tidal collection
+## Use your own Tidal app
 
-1. Register an app at <https://developer.tidal.com> with the `collection.read` scope. Add a redirect URI for each place you’ll open the page, exactly as it appears in the address bar, e.g. `http://localhost:8000/` and `https://you.github.io/side-a/`.
-2. Put the app’s client id in `config.js`. It’s public by design with PKCE, so committing it is fine. Never add the client secret.
-3. Open the page and log in.
+1. Register an app at <https://developer.tidal.com> with the `collection.read` scope. Add a redirect URI for each address you’ll open the page at, exactly as in the address bar, e.g. `http://localhost:8000/` and `https://you.github.io/side-a/`.
+2. Put its client id in `config.js`. Committing it is fine; never add the client secret.
 
-## Host it
+Any static host works. On GitHub Pages, serve the branch root.
 
-Any static host works. For GitHub Pages, push the repo and enable Pages for the branch root. The files the browser needs are `index.html`, `style.css`, `app.js`, `pick.js`, `tidal.js`, `config.js` and `demo.js`.
-
-## Files
-
-| File | What |
-|---|---|
-| `app.js` | UI, boot, local storage, when to refresh |
-| `pick.js` | Choosing six albums (pure, tested) |
-| `tidal.js` | Login, collection sync, response parsers |
-| `config.js` | Tidal client id |
-| `demo.js` | Sample albums for `?demo` |
-| `docs/HANDOVER.md` | Status, what’s verified, next steps |
+Changing the code? Read [`docs/HANDOVER.md`](docs/HANDOVER.md). Visual design: [`docs/design.md`](docs/design.md).

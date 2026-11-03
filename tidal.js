@@ -1,6 +1,5 @@
 // Tidal login (OAuth 2 + PKCE, no client secret) and the two API calls Side A needs.
-// Endpoints come from Tidal's OpenAPI spec (@tidal-music/api 0.56.0). Not yet run live:
-// see docs/HANDOVER.md for what's verified and what's assumed.
+// Endpoints from Tidal's OpenAPI spec (@tidal-music/api 0.56.0); see docs/HANDOVER.md for what's verified live.
 
 const AUTHORIZE_URL = 'https://login.tidal.com/authorize';
 const TOKEN_URL = 'https://auth.tidal.com/v1/oauth2/token';
