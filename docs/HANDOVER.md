@@ -28,7 +28,7 @@ One screen: a greeting, the date and six random albums from the owner’s Tidal 
 | `tidal.js` | PKCE login (no secret), token refresh, `syncCollection()`, response parsers. |
 | `app.js` | Boot, rendering, local storage, when to refresh. |
 | `config.js` | Tidal client id (public by design with PKCE). Redirect URI is the page’s own URL. |
-| `demo.js` | 66 sample albums for `?demo`; their Play links go to a Tidal search. |
+| `demo.js` | 84 albums from the owner’s collection for `?demo` (real ids and covers), four or five each by 19 artists so “more like these” works. |
 
 **“Like these”** means same artist, nothing more: up to n − 1 new slots go to other albums by the picked artists, and at least one stays random. Genres and Tidal’s similar albums were tried and dropped (see below).
 

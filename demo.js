@@ -1,73 +1,87 @@
-// Sample albums for ?demo, so the app can be tried without a Tidal login.
-// title | artist | year
-const RAW = `Kind of Blue|Miles Davis|1959|Jazz
-In a Silent Way|Miles Davis|1969
-A Love Supreme|John Coltrane|1965
-Blue Train|John Coltrane|1958
-Moanin’|Art Blakey & the Jazz Messengers|1959
-Waltz for Debby|Bill Evans Trio|1962
-Journey in Satchidananda|Alice Coltrane|1971
-Getz/Gilberto|Stan Getz & João Gilberto|1964
-Promises|Floating Points, Pharoah Sanders & LSO|2021
-Kid A|Radiohead|2000
-In Rainbows|Radiohead|2007
-OK Computer|Radiohead|1997
-Spirit of Eden|Talk Talk|1988
-Boxer|The National|2007
-Funeral|Arcade Fire|2004
-Ágætis byrjun|Sigur Rós|1999
-Blue|Joni Mitchell|1971
-Pink Moon|Nick Drake|1972
-Carrie & Lowell|Sufjan Stevens|2015
-For Emma, Forever Ago|Bon Iver|2007
-Fleet Foxes|Fleet Foxes|2008
-Dragon New Warm Mountain I Believe in You|Big Thief|2022
-Discovery|Daft Punk|2001
-Random Access Memories|Daft Punk|2013
-Music Has the Right to Children|Boards of Canada|1998
-Selected Ambient Works 85–92|Aphex Twin|1992
-Immunity|Jon Hopkins|2013
-Since I Left You|The Avalanches|2000
-Sound of Silver|LCD Soundsystem|2007
-Swim|Caribou|2010
-Untrue|Burial|2007
-Rounds|Four Tet|2003
-Black Sands|Bonobo|2010
-Moon Safari|Air|1998
-Rumours|Fleetwood Mac|1977
-Abbey Road|The Beatles|1969
-Pet Sounds|The Beach Boys|1966
-Remain in Light|Talking Heads|1980
-Unknown Pleasures|Joy Division|1979
-Disintegration|The Cure|1989
-Loveless|My Bloody Valentine|1991
-Heaven or Las Vegas|Cocteau Twins|1990
-Teen Dream|Beach House|2010
-Currents|Tame Impala|2015
-Con Todo El Mundo|Khruangbin|2018
-Mezzanine|Massive Attack|1998
-Dummy|Portishead|1994
-What’s Going On|Marvin Gaye|1971
-Songs in the Key of Life|Stevie Wonder|1976
-Voodoo|D’Angelo|2000
-Blonde|Frank Ocean|2016
-Pastel Blues|Nina Simone|1965
-To Pimp a Butterfly|Kendrick Lamar|2015
-Madvillainy|Madvillain|2004
-The Low End Theory|A Tribe Called Quest|1991
-Donuts|J Dilla|2006
-Music for Airports|Brian Eno|1978
-Tabula Rasa|Arvo Pärt|1984
-The Blue Notebooks|Max Richter|2004
-Spaces|Nils Frahm|2013
-Glassworks|Philip Glass|1982
-Goldberg Variations (1981)|Glenn Gould|1982
-Buena Vista Social Club|Buena Vista Social Club|1997
-In the Heart of the Moon|Ali Farka Touré & Toumani Diabaté|2005
-Éthiopiques Vol. 4|Mulatu Astatke|1998
-Expensive Shit|Fela Kuti|1975`;
-
-export const demoAlbums = () => RAW.split('\n').map((line, i) => {
-  const [title, artist, year] = line.split('|');
-  return { id: 'demo' + i, title, artist, year: Number(year), cover: null };
-});
+// Sample albums for ?demo, picked from the owner’s collection: several per artist, so “more like these” has something to find.
+export const demoAlbums = () => [
+  {"id":"244333506","title":"Will Of The People","artist":"Muse","year":2022,"cover":"https://resources.tidal.com/images/7958cb76/f164/4273/8332/da2f13fc9715/320x320.jpg"},
+  {"id":"3083286","title":"The Resistance","artist":"Muse","year":2009,"cover":"https://resources.tidal.com/images/a918b61b/5cc2/4e70/a1e3/bce1e651395a/320x320.jpg"},
+  {"id":"46286117","title":"Drones","artist":"Muse","year":2015,"cover":"https://resources.tidal.com/images/f308d0ce/fc83/4004/af6d/e38010a9c6ba/320x320.jpg"},
+  {"id":"17342660","title":"The 2nd Law","artist":"Muse","year":2012,"cover":"https://resources.tidal.com/images/462ae304/cfd5/4ed2/be93/6dcd7f1586e2/320x320.jpg"},
+  {"id":"97691483","title":"Simulation Theory (Super Deluxe)","artist":"Muse","year":2018,"cover":"https://resources.tidal.com/images/c0a602f5/b9d4/475c/9e49/2b0700dd27e0/320x320.jpg"},
+  {"id":"35130573","title":"TRON: Legacy Reconfigured","artist":"Daft Punk","year":2011,"cover":"https://resources.tidal.com/images/0fd5a623/a78c/4c74/945b/a2b195886a52/320x320.jpg"},
+  {"id":"37091006","title":"TRON: Legacy","artist":"Daft Punk","year":2010,"cover":"https://resources.tidal.com/images/4eab0d97/193a/4ac6/a240/35131d8ce586/320x320.jpg"},
+  {"id":"20115556","title":"Random Access Memories","artist":"Daft Punk","year":2013,"cover":"https://resources.tidal.com/images/b66a5c40/c34d/4507/a0dc/5f98e46fdd20/320x320.jpg"},
+  {"id":"165842168","title":"TRON: Legacy - The Complete Edition (Original Motion Picture Soundtrack)","artist":"Daft Punk","year":2010,"cover":"https://resources.tidal.com/images/66064f76/9741/474e/ac84/2a66a783d0df/320x320.jpg"},
+  {"id":"348505533","title":"The Singularity","artist":"Bear McCreary","year":2024,"cover":"https://resources.tidal.com/images/50259159/e4a2/4db3/8eca/3b0c0f5f4780/320x320.jpg"},
+  {"id":"243365388","title":"Black Sails (A Starz Original Series Soundtrack)","artist":"Bear McCreary","year":2014,"cover":"https://resources.tidal.com/images/cdd920e7/366c/4524/94c4/4f5355382757/320x320.jpg"},
+  {"id":"243365538","title":"Battlestar Galactica: Season 4 (Original Soundtrack) [Remastered]","artist":"Bear McCreary","year":2021,"cover":"https://resources.tidal.com/images/04ef35b0/5311/45d6/b8cb/a27965ff1a2e/320x320.jpg"},
+  {"id":"243365494","title":"Battlestar Galactica: Season 2 (Original Soundtrack) [Remastered]","artist":"Bear McCreary","year":2021,"cover":"https://resources.tidal.com/images/137947f3/d7eb/42f0/a1cc/b1525dc41be1/320x320.jpg"},
+  {"id":"243365517","title":"Battlestar Galactica: Season 3 (Original Soundtrack) [Remastered]","artist":"Bear McCreary","year":2021,"cover":"https://resources.tidal.com/images/4bf01e55/52c6/4411/a1f2/36bd7c9c7fa2/320x320.jpg"},
+  {"id":"460456659","title":"TRON: Ares (Original Motion Picture Soundtrack)","artist":"Nine Inch Nails","year":2025,"cover":"https://resources.tidal.com/images/704e4964/6617/4084/8c05/14b96e90c5f4/320x320.jpg"},
+  {"id":"35088373","title":"Pretty Hate Machine","artist":"Nine Inch Nails","year":1989,"cover":"https://resources.tidal.com/images/d1de235b/c17a/4e45/be0b/8d3f62930ca5/320x320.jpg"},
+  {"id":"34737503","title":"With Teeth (Bonus Tracks)","artist":"Nine Inch Nails","year":2005,"cover":"https://resources.tidal.com/images/0b14cbc6/4e3a/4e6d/8709/d584e3d1adb2/320x320.jpg"},
+  {"id":"637208","title":"The Downward Spiral","artist":"Nine Inch Nails","year":1994,"cover":"https://resources.tidal.com/images/5bd431c4/0c4a/4d73/9e3d/bb4873185b1e/320x320.jpg"},
+  {"id":"34972787","title":"Third","artist":"Portishead","year":2008,"cover":"https://resources.tidal.com/images/cdf9e603/a379/4354/a123/5d8bd2a67105/320x320.jpg"},
+  {"id":"1230468","title":"Roseland NYC Live","artist":"Portishead","year":1998,"cover":"https://resources.tidal.com/images/8c32aaab/ec98/41f4/a96e/d3dbff8e195d/320x320.jpg"},
+  {"id":"632078","title":"Portishead","artist":"Portishead","year":1997,"cover":"https://resources.tidal.com/images/fdca5176/7e05/49db/8b26/6dc3a2c8e2fd/320x320.jpg"},
+  {"id":"1765476","title":"Dummy","artist":"Portishead","year":1994,"cover":"https://resources.tidal.com/images/533f4a38/4084/469b/8d53/3aa53715a746/320x320.jpg"},
+  {"id":"61799588","title":"In Rainbows","artist":"Radiohead","year":2007,"cover":"https://resources.tidal.com/images/c2f01a2d/7230/45cc/af34/fd00a72b46c3/320x320.jpg"},
+  {"id":"58990510","title":"OK Computer","artist":"Radiohead","year":1997,"cover":"https://resources.tidal.com/images/e77e4cc0/6cd0/4522/807d/88aeac488065/320x320.jpg"},
+  {"id":"58990484","title":"Pablo Honey","artist":"Radiohead","year":1993,"cover":"https://resources.tidal.com/images/ccc50c5e/b347/4faa/9524/924dc8f071fc/320x320.jpg"},
+  {"id":"60215409","title":"A Moon Shaped Pool","artist":"Radiohead","year":2016,"cover":"https://resources.tidal.com/images/7dbf9462/427d/4109/8089/b4206ee4d9a4/320x320.jpg"},
+  {"id":"58990523","title":"Kid A","artist":"Radiohead","year":2000,"cover":"https://resources.tidal.com/images/e61bc6a3/c321/410b/b842/838d49a2dc06/320x320.jpg"},
+  {"id":"251346836","title":"Planisphere","artist":"Justice","year":2022,"cover":"https://resources.tidal.com/images/7e6c39b4/b70a/4dbb/b8a2/f3404bfe88a7/320x320.jpg"},
+  {"id":"359489762","title":"Hyperdrama","artist":"Justice","year":2024,"cover":"https://resources.tidal.com/images/90ab7fed/3335/4fe3/96c5/043fb267e1db/320x320.jpg"},
+  {"id":"67261055","title":"Woman","artist":"Justice","year":2016,"cover":"https://resources.tidal.com/images/c211e8ad/8c47/4a10/92f7/a27f11b41d8c/320x320.jpg"},
+  {"id":"82994404","title":"Audio, Video, Disco.","artist":"Justice","year":2011,"cover":"https://resources.tidal.com/images/b0e6678c/2ae0/44c8/b0f6/e0d0d62fdddb/320x320.jpg"},
+  {"id":"364426431","title":"Neon Theatre","artist":"Their Dogs Were Astronauts","year":2017,"cover":"https://resources.tidal.com/images/c361d0a8/5631/4113/89a9/1421228bb054/320x320.jpg"},
+  {"id":"364582645","title":"Momentum","artist":"Their Dogs Were Astronauts","year":2023,"cover":"https://resources.tidal.com/images/33347c8e/4210/4c48/8a79/7dfef9d268dc/320x320.jpg"},
+  {"id":"364590786","title":"Dreamcatcher","artist":"Their Dogs Were Astronauts","year":2020,"cover":"https://resources.tidal.com/images/4a98c6a0/fffc/4b80/8b00/0793c1dd43e6/320x320.jpg"},
+  {"id":"363927904","title":"Kolibri","artist":"Their Dogs Were Astronauts","year":2021,"cover":"https://resources.tidal.com/images/765918ba/d2d8/448d/ae46/94c2e6129b24/320x320.jpg"},
+  {"id":"77622404","title":"Born To Die","artist":"Lana Del Rey","year":2012,"cover":"https://resources.tidal.com/images/7b7dae67/924c/4216/bcb1/996213ea8307/320x320.jpg"},
+  {"id":"31086092","title":"Ultraviolence","artist":"Lana Del Rey","year":2014,"cover":"https://resources.tidal.com/images/2001900d/dd7f/40f4/94e4/f8ddc4b879ac/320x320.jpg"},
+  {"id":"17951883","title":"Paradise","artist":"Lana Del Rey","year":2012,"cover":"https://resources.tidal.com/images/55337173/6562/4298/8d77/2b3a59fdbd53/320x320.jpg"},
+  {"id":"51076479","title":"Honeymoon","artist":"Lana Del Rey","year":2015,"cover":"https://resources.tidal.com/images/8d034e5c/46c3/41d6/b0be/13dd925a3c82/320x320.jpg"},
+  {"id":"116099819","title":"Norman Fucking Rockwell!","artist":"Lana Del Rey","year":2019,"cover":"https://resources.tidal.com/images/1d637950/27af/491f/8bd9/a6027cb93c62/320x320.jpg"},
+  {"id":"253546931","title":"Window","artist":"Ichika Nito","year":2022,"cover":"https://resources.tidal.com/images/8ac85c11/114a/4cdb/a040/3700c1f76e2e/320x320.jpg"},
+  {"id":"246466826","title":"until the end","artist":"Ichika Nito","year":2020,"cover":"https://resources.tidal.com/images/6ca45e29/873c/4890/a564/f9df8970f90e/320x320.jpg"},
+  {"id":"246464233","title":"N I T O","artist":"Ichika Nito","year":2020,"cover":"https://resources.tidal.com/images/21904655/d4af/48c4/a4fb/242db501e174/320x320.jpg"},
+  {"id":"246464666","title":"Awakening","artist":"Ichika Nito","year":2022,"cover":"https://resources.tidal.com/images/647da480/fd81/40c1/98c0/9ed0de2aeba0/320x320.jpg"},
+  {"id":"3367899","title":"Heligoland","artist":"Massive Attack","year":2010,"cover":"https://resources.tidal.com/images/13fec489/cbee/4de8/ba5c/ee2e0aa86214/320x320.jpg"},
+  {"id":"161314","title":"Mezzanine","artist":"Massive Attack","year":1998,"cover":"https://resources.tidal.com/images/be99cdda/5b02/41c6/8396/7b793478f2e1/320x320.jpg"},
+  {"id":"160299","title":"Protection","artist":"Massive Attack","year":1994,"cover":"https://resources.tidal.com/images/c74ecf49/9010/4a1a/9d5d/969df532d413/320x320.jpg"},
+  {"id":"17691643","title":"Blue Lines (2012 Mix/Master)","artist":"Massive Attack","year":1991,"cover":"https://resources.tidal.com/images/750ffef8/aaf7/4bd9/9e4a/8c0a4c1f830f/320x320.jpg"},
+  {"id":"104578280","title":"Avril Lavigne (Expanded Edition)","artist":"Avril Lavigne","year":2013,"cover":"https://resources.tidal.com/images/09aa4d6e/903f/4cdf/8cfd/058215871578/320x320.jpg"},
+  {"id":"33713330","title":"Let Go","artist":"Avril Lavigne","year":2002,"cover":"https://resources.tidal.com/images/88858072/3555/4190/90cd/073dff3ff6a8/320x320.jpg"},
+  {"id":"11337780","title":"The Best Damn Thing (Expanded Edition)","artist":"Avril Lavigne","year":2007,"cover":"https://resources.tidal.com/images/8047822b/e26d/4fd5/8dfe/a6c87ace2fe7/320x320.jpg"},
+  {"id":"11945435","title":"Under My Skin","artist":"Avril Lavigne","year":2004,"cover":"https://resources.tidal.com/images/11a76cd0/5747/40ba/b671/99e7d339597b/320x320.jpg"},
+  {"id":"481878362","title":"Head Above Water","artist":"Avril Lavigne","year":2019,"cover":"https://resources.tidal.com/images/68f70723/fc18/450a/95df/1f4ab91d0cfd/320x320.jpg"},
+  {"id":"56299921","title":"Mechanical Animals","artist":"Marilyn Manson","year":1998,"cover":"https://resources.tidal.com/images/9052615d/955c/46a1/b977/3fc31c36793a/320x320.jpg"},
+  {"id":"613467","title":"The Golden Age Of Grotesque","artist":"Marilyn Manson","year":2003,"cover":"https://resources.tidal.com/images/8f6b7fbc/1905/4c7b/89d5/f3c9431983f6/320x320.jpg"},
+  {"id":"565902","title":"EAT ME, DRINK ME (International Version)","artist":"Marilyn Manson","year":2007,"cover":"https://resources.tidal.com/images/bc499d4c/021c/4a7c/880e/4ba3678b7716/320x320.jpg"},
+  {"id":"154131001","title":"WE ARE CHAOS","artist":"Marilyn Manson","year":2020,"cover":"https://resources.tidal.com/images/47b4b1f9/9247/492d/98e2/62136d107a08/320x320.jpg"},
+  {"id":"30349456","title":"Led Zeppelin II (Deluxe Edition)","artist":"Led Zeppelin","year":1969,"cover":"https://resources.tidal.com/images/512d5f9d/989e/46e4/b90e/a632e0476d0f/320x320.jpg"},
+  {"id":"41095075","title":"Physical Graffiti (Deluxe Edition)","artist":"Led Zeppelin","year":1975,"cover":"https://resources.tidal.com/images/7780d8fb/be62/4026/80d3/b85b67a8bf9b/320x320.jpg"},
+  {"id":"36336293","title":"Led Zeppelin IV (Deluxe Edition)","artist":"Led Zeppelin","year":1971,"cover":"https://resources.tidal.com/images/538cd367/99ce/415b/b974/327fa6d93e27/320x320.jpg"},
+  {"id":"95312277","title":"Led Zeppelin x Led Zeppelin","artist":"Led Zeppelin","year":2018,"cover":"https://resources.tidal.com/images/dd00306b/1eed/4b76/a00b/830e8dab7140/320x320.jpg"},
+  {"id":"55391786","title":"The Dark Side of the Moon","artist":"Pink Floyd","year":1973,"cover":"https://resources.tidal.com/images/05ccaf43/2f3f/4de2/8d4b/23e9dc56d831/320x320.jpg"},
+  {"id":"55391797","title":"Wish You Were Here","artist":"Pink Floyd","year":1975,"cover":"https://resources.tidal.com/images/2a1de2b6/01d7/4dee/8ded/f1b5a934ab5d/320x320.jpg"},
+  {"id":"55391447","title":"The Wall","artist":"Pink Floyd","year":1979,"cover":"https://resources.tidal.com/images/60aca6f0/ea5c/4c81/9a6e/c1f7192c8480/320x320.jpg"},
+  {"id":"55391422","title":"Atom Heart Mother","artist":"Pink Floyd","year":1970,"cover":"https://resources.tidal.com/images/ea1d13fe/b853/4edc/965a/6acfa0054f0b/320x320.jpg"},
+  {"id":"55391742","title":"Meddle","artist":"Pink Floyd","year":1971,"cover":"https://resources.tidal.com/images/0497022d/0491/4487/a4ba/15a91647c7af/320x320.jpg"},
+  {"id":"554494222","title":"Hollow Bones","artist":"Rival Sons","year":2016,"cover":"https://resources.tidal.com/images/075b12a2/2fec/4afd/a09e/8620a34f4d05/320x320.jpg"},
+  {"id":"102400000","title":"Feral Roots","artist":"Rival Sons","year":2019,"cover":"https://resources.tidal.com/images/6703d131/d38a/41a4/ad31/c007d1022260/320x320.jpg"},
+  {"id":"163382434","title":"Before the Fire","artist":"Rival Sons","year":2009,"cover":"https://resources.tidal.com/images/8d71ace1/e138/4812/aca1/22b964d1d6f2/320x320.jpg"},
+  {"id":"366022285","title":"Head Down (2023 Remastered Version)","artist":"Rival Sons","year":2012,"cover":"https://resources.tidal.com/images/4fcca1ea/c6d7/4c6d/8b11/15f328fccd74/320x320.jpg"},
+  {"id":"68648810","title":"Diamond Dogs (2016 Remaster)","artist":"David Bowie","year":1974,"cover":"https://resources.tidal.com/images/13fc7dc8/dc30/4b61/b192/32d19295823d/320x320.jpg"},
+  {"id":"69761282","title":"Station to Station (2016 Remaster)","artist":"David Bowie","year":1976,"cover":"https://resources.tidal.com/images/83dd59b5/3f00/4b71/9883/f7539136452b/320x320.jpg"},
+  {"id":"51161440","title":"David Bowie (aka Space Oddity) [2015 Remaster]","artist":"David Bowie","year":1969,"cover":"https://resources.tidal.com/images/9c13915c/d109/4bc1/b66f/3d874ffb00ab/320x320.jpg"},
+  {"id":"51161430","title":"The Man Who Sold the World (2015 Remaster)","artist":"David Bowie","year":1970,"cover":"https://resources.tidal.com/images/3c613557/afa1/4674/b228/5c146d3ba56a/320x320.jpg"},
+  {"id":"51161395","title":"Aladdin Sane (2013 Remaster)","artist":"David Bowie","year":1973,"cover":"https://resources.tidal.com/images/c6f99e38/e5f6/4cf7/9ed0/1548928e0604/320x320.jpg"},
+  {"id":"473593665","title":"Going to Hell","artist":"The Pretty Reckless","year":2014,"cover":"https://resources.tidal.com/images/879fc569/357e/4a05/a486/73172b1ae799/320x320.jpg"},
+  {"id":"4310358","title":"Light Me Up","artist":"The Pretty Reckless","year":2010,"cover":"https://resources.tidal.com/images/627dc03a/fe67/4b4e/9c0c/1f7101e9abe9/320x320.jpg"},
+  {"id":"508659197","title":"25","artist":"The Pretty Reckless","year":2020,"cover":"https://resources.tidal.com/images/26e369ac/69f0/4c98/82d1/6118cb7486db/320x320.jpg"},
+  {"id":"65896790","title":"Who You Selling For","artist":"The Pretty Reckless","year":2016,"cover":"https://resources.tidal.com/images/97ed8e28/a7fe/464e/adc2/ac5e591c6ed5/320x320.jpg"},
+  {"id":"505599515","title":"Death by Rock and Roll (Commentary Version)","artist":"The Pretty Reckless","year":2021,"cover":"https://resources.tidal.com/images/4c886246/dd37/4769/a66c/902918925c36/320x320.jpg"},
+  {"id":"383712368","title":"How Beauty Holds The Hand Of Sorrow","artist":"Ane Brun","year":2020,"cover":"https://resources.tidal.com/images/e7a82024/319e/4ec0/a332/5b97a5ae2fc7/320x320.jpg"},
+  {"id":"383711881","title":"After The Great Storm","artist":"Ane Brun","year":2020,"cover":"https://resources.tidal.com/images/fc063b75/e7b4/41d6/bf9d/832a4a09be89/320x320.jpg"},
+  {"id":"383710029","title":"Leave Me Breathless","artist":"Ane Brun","year":2017,"cover":"https://resources.tidal.com/images/e3077e0e/c29a/428c/b78a/9d9340f67a74/320x320.jpg"},
+  {"id":"383699409","title":"Changing of the Seasons","artist":"Ane Brun","year":2008,"cover":"https://resources.tidal.com/images/f8bf3bbd/80ab/466d/86d0/b021cc7c9d95/320x320.jpg"},
+];

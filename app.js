@@ -47,7 +47,7 @@ function card(a) {
   const on = picked.has(a.id);
   return `<li class="sleeve${on ? ' is-picked' : ''}" style="--tilt:${tilt}deg" data-id="${esc(a.id)}">
     <button class="sleeve-art" data-action="toggle" aria-pressed="${on}" aria-label="${esc(a.title)} by ${esc(a.artist)}: more like this">${cover(a)}<span class="check" aria-hidden="true">✓</span></button>
-    <a class="play" href="${esc(demo ? `https://listen.tidal.com/search?q=${encodeURIComponent(a.artist + ' ' + a.title)}` : albumUrl(a.id))}" target="_blank" rel="noopener">Play</a>
+    <a class="play" href="${esc(albumUrl(a.id))}" target="_blank" rel="noopener">Play</a>
     <div class="sleeve-meta"><p class="t">${esc(a.title)}</p><p class="a">${esc(a.artist)}${a.year ? ', ' + a.year : ''}</p></div>
   </li>`;
 }
