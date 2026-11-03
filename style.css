@@ -50,6 +50,7 @@ main{max-width:1080px;margin:0 auto;padding:0 1.25rem}
 .btn{display:inline-block;border:0;cursor:pointer;border-radius:999px;padding:.7rem 1.2rem;font-weight:600;text-decoration:none;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line)}
 .btn.primary{background:var(--sun);color:var(--sun-ink);box-shadow:none}
 .btn.primary:hover{filter:brightness(1.05)}
+.btn:disabled{opacity:.5;cursor:default;filter:none}
 .status{margin:0 0 0 auto;color:var(--ink-2);font-size:.85rem}
 .link{background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;color:inherit}
 

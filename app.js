@@ -43,7 +43,7 @@ function cover(a) {
 }
 
 function card(a) {
-  const tilt = ((hash(a.id + shown[0]?.id) / 2 ** 32 - 0.5) * 6).toFixed(1);
+  const tilt = ((hash(a.id) / 2 ** 32 - 0.5) * 6).toFixed(1);
   const on = picked.has(a.id);
   return `<li class="sleeve${on ? ' is-picked' : ''}" style="--tilt:${tilt}deg" data-id="${esc(a.id)}">
     <button class="sleeve-art" data-action="toggle" aria-pressed="${on}" aria-label="${esc(a.title)} by ${esc(a.artist)}: more like this">${cover(a)}<span class="check" aria-hidden="true">✓</span></button>
@@ -67,7 +67,9 @@ function render() {
 }
 
 function updateButton() {
-  $('[data-action="more"]').textContent = picked.size ? `More like ${picked.size === 1 ? 'this' : 'these'}` : 'Six more';
+  const btn = $('[data-action="more"]');
+  btn.textContent = picked.size ? `More like ${picked.size === 1 ? 'this' : 'these'}` : 'Six more';
+  btn.disabled = picked.size >= N; // every slot is kept: nothing to deal
 }
 
 function renderStatus() {
