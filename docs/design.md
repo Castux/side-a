@@ -20,7 +20,7 @@ Type: Young Serif for the greeting and headings, Familjen Grotesk for everything
 - One screen: greeting, six sleeves, one button. No other pages.
 - The sleeves are slightly tilted like records on a table; a picked sleeve straightens, lifts and gets a gold ring.
 - Gold (`--sun`) means “chosen” or “do this next”. Don’t use it decoratively.
-- Every card has its own Play button.
+- Every card has its own Play button, between the sleeve and the title, so the buttons line up across a row.
 - Albums without art get a gradient placeholder with the title.
 - Mobile first: three by two on phones, one row of six from 900px.
 - Copy: sentence case, plain verbs, typographic apostrophes, no all-caps labels.

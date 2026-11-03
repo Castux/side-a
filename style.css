@@ -39,10 +39,10 @@ main{max-width:1080px;margin:0 auto;padding:0 1.25rem}
 .sleeve.is-picked .sleeve-art{transform:rotate(0) translateY(-10px) scale(1.03);box-shadow:0 0 0 3px var(--sun),var(--lift)}
 .check{position:absolute;right:-.55rem;top:-.55rem;width:1.8rem;height:1.8rem;border-radius:50%;background:var(--sun);color:var(--sun-ink);display:grid;place-items:center;font-weight:600;transform:scale(0);transition:transform .2s}
 .sleeve.is-picked .check{transform:scale(1)}
-.sleeve-meta{margin-top:.7rem;min-width:0}
+.sleeve-meta{margin-top:.55rem;min-width:0}
 .sleeve-meta .t{margin:0;font-weight:600;font-size:.92rem;line-height:1.25;overflow-wrap:anywhere}
 .sleeve-meta .a{margin:.1rem 0 0;color:var(--ink-2);font-size:.82rem;line-height:1.3}
-.play{display:inline-flex;align-items:center;gap:.35rem;margin-top:.5rem;align-self:flex-start;text-decoration:none;font-weight:600;font-size:.85rem;padding:.3rem .7rem .3rem .55rem;border-radius:999px;background:var(--ink);color:var(--paper)}
+.play{display:inline-flex;align-items:center;gap:.35rem;margin-top:.8rem;align-self:flex-start;text-decoration:none;font-weight:600;font-size:.85rem;padding:.3rem .7rem .3rem .55rem;border-radius:999px;background:var(--ink);color:var(--paper)}
 .play::before{content:"";border-left:.5rem solid currentColor;border-top:.32rem solid transparent;border-bottom:.32rem solid transparent}
 .play:hover{background:var(--ink-2)}
 

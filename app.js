@@ -44,10 +44,11 @@ function cover(a) {
 
 function card(a) {
   const tilt = ((hash(a.id + shown[0]?.id) / 2 ** 32 - 0.5) * 6).toFixed(1);
-  return `<li class="sleeve" style="--tilt:${tilt}deg" data-id="${esc(a.id)}">
-    <button class="sleeve-art" data-action="toggle" aria-pressed="false" aria-label="${esc(a.title)} by ${esc(a.artist)}: more like this">${cover(a)}<span class="check" aria-hidden="true">✓</span></button>
-    <div class="sleeve-meta"><p class="t">${esc(a.title)}</p><p class="a">${esc(a.artist)}${a.year ? ', ' + a.year : ''}</p></div>
+  const on = picked.has(a.id);
+  return `<li class="sleeve${on ? ' is-picked' : ''}" style="--tilt:${tilt}deg" data-id="${esc(a.id)}">
+    <button class="sleeve-art" data-action="toggle" aria-pressed="${on}" aria-label="${esc(a.title)} by ${esc(a.artist)}: more like this">${cover(a)}<span class="check" aria-hidden="true">✓</span></button>
     <a class="play" href="${esc(demo ? `https://listen.tidal.com/search?q=${encodeURIComponent(a.artist + ' ' + a.title)}` : albumUrl(a.id))}" target="_blank" rel="noopener">Play</a>
+    <div class="sleeve-meta"><p class="t">${esc(a.title)}</p><p class="a">${esc(a.artist)}${a.year ? ', ' + a.year : ''}</p></div>
   </li>`;
 }
 
@@ -66,7 +67,7 @@ function render() {
 }
 
 function updateButton() {
-  $('[data-action="more"]').textContent = picked.size ? `Six more like ${picked.size === 1 ? 'this' : 'these'}` : 'Six more';
+  $('[data-action="more"]').textContent = picked.size ? `More like ${picked.size === 1 ? 'this' : 'these'}` : 'Six more';
 }
 
 function renderStatus() {
@@ -97,13 +98,17 @@ function renderConnect(error) {
 
 /* ---------- Actions ---------- */
 
+// Picked sleeves stay where they are (still picked); the other slots get albums like them.
 function deal() {
-  const liked = shown.filter((a) => picked.has(a.id));
-  const { albums: next, reset } = pick(albums, { n: N, seen: seenToday(), liked });
-  markSeen(next.map((a) => a.id), reset);
+  const kept = shown.filter((a) => picked.has(a.id));
+  const keptIds = kept.map((a) => a.id);
+  const { albums: fresh, reset } = pick(albums, { n: N - kept.length, seen: [...seenToday(), ...keptIds], liked: kept });
+  markSeen(fresh.map((a) => a.id), reset);
   note = reset ? 'You’ve seen every album today, so these are repeats.' : '';
-  shown = next;
-  picked.clear();
+  let i = 0;
+  shown = kept.length
+    ? [...shown.map((a) => (picked.has(a.id) ? a : fresh[i++])), ...fresh.slice(i)].filter(Boolean)
+    : fresh;
   render();
 }
 

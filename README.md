@@ -1,6 +1,6 @@
 # Side A
 
-Six random albums from your Tidal collection to start the day. Tap any that suit your mood to get six more like them, or press Play to open one in Tidal. Albums you’ve seen today don’t come back until tomorrow.
+Six random albums from your Tidal collection to start the day. Tap any that suit your mood to keep them and fill the rest with more like them, or press Play to open one in Tidal. Albums you’ve seen today don’t come back until tomorrow.
 
 It’s a static page with no build step. Your Tidal login and album list stay in your browser’s local storage.
 

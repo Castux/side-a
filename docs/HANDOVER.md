@@ -9,7 +9,7 @@ Updated 3 November 2026. The first build (Vite + TypeScript, four-axis mood mode
 The owner listens to whole albums from their Tidal collection. Each morning Side A shows **six random albums**. They can:
 
 - press **Play** on any card to open it in Tidal, or
-- tap the sleeves that suit their mood and press **Six more like these**, or tap nothing and press **Six more** for another random six.
+- tap the sleeves that suit their mood and press **More like these**: the picked sleeves stay put (still picked) and the other slots fill with albums like them. Untap a sleeve to let it go. Or tap nothing and press **Six more** for another random six.
 
 Albums shown today aren’t shown again until tomorrow. That’s the only memory. When every album has been seen today, the picker starts over and says so.
 
