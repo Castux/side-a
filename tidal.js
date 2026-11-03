@@ -29,7 +29,7 @@ export function pickCover(artwork, min = 320) {
   return (big[0] ?? small[0])?.href ?? null;
 }
 
-/** GET /albums?filter[id]=…&include=artists,genres,coverArt → albums in Side A's shape. */
+/** GET /albums?filter[id]=…&include=artists,coverArt → albums in Side A's shape. */
 export function parseAlbums(doc) {
   const included = new Map((doc?.included ?? []).map((r) => [`${r.type}:${r.id}`, r]));
   const rel = (r, name) => {
@@ -42,7 +42,6 @@ export function parseAlbums(doc) {
     title: r.attributes?.title || 'Untitled',
     artist: rel(r, 'artists').map((a) => a.attributes?.name).filter(Boolean).join(', ') || 'Unknown artist',
     year: Number(String(r.attributes?.releaseDate ?? '').slice(0, 4)) || 0,
-    genres: rel(r, 'genres').map((g) => g.attributes?.genreName).filter(Boolean),
     cover: pickCover(rel(r, 'coverArt')[0]),
   }));
 }
@@ -159,7 +158,7 @@ export async function syncCollection(clientId, known, onProgress = () => {}) {
   const missing = ids.filter((id) => !byId.has(id));
   for (let i = 0; i < missing.length; i += 20) {
     const doc = await get(clientId, '/albums', {
-      'filter[id]': missing.slice(i, i + 20), include: ['artists', 'genres', 'coverArt'],
+      'filter[id]': missing.slice(i, i + 20), include: ['artists', 'coverArt'],
     });
     for (const a of parseAlbums(doc)) byId.set(a.id, a);
     onProgress(`Loaded ${ids.length - missing.length + Math.min(i + 20, missing.length)} of ${ids.length} albums…`);

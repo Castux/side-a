@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { dayKey, likeness, pick } from '../pick.js';
+import { dayKey, deal, pick } from '../pick.js';
 
 // Small deterministic RNG so the tests don't flake.
 const seeded = (s = 1) => () => ((s = Math.imul(s ^ (s >>> 15), 2246822507) + 0x6d2b79f5 >>> 0) / 2 ** 32);
-const album = (id, artist = 'A' + id, genres = [], year = 2000) => ({ id: String(id), title: 'T' + id, artist, genres, year, cover: null });
-const pool = Array.from({ length: 30 }, (_, i) => album(i, 'Artist ' + i, [], 1950 + i * 3));
+const album = (id, artist = 'A' + id) => ({ id: String(id), title: 'T' + id, artist, year: 2000, cover: null });
+const pool = Array.from({ length: 30 }, (_, i) => album(i, 'Artist ' + i));
 
 test('dayKey uses the local calendar day', () => {
   assert.equal(dayKey(new Date(2026, 10, 3, 23, 59)), '2026-11-03');
@@ -39,25 +39,52 @@ test('works with a collection smaller than six', () => {
   assert.equal(albums.length, 4);
 });
 
-test('likeness: artist beats genre beats era', () => {
-  const x = album(1, 'Miles Davis', ['Jazz'], 1959);
-  assert.ok(likeness(x, album(2, 'Miles Davis', [], 1990)) > likeness(x, album(3, 'Other', ['Jazz'], 1990)));
-  assert.ok(likeness(x, album(3, 'Other', ['Jazz'], 1990)) > likeness(x, album(4, 'Other', [], 1960)));
-  assert.equal(likeness(x, album(5, 'Other', ['Rock'], 2020)), 0);
-});
-
-test('liked albums pull in similar ones and keep one random slot', () => {
-  const jazz = Array.from({ length: 10 }, (_, i) => album('j' + i, 'J' + i, ['Jazz'], 1800));
-  const rock = Array.from({ length: 40 }, (_, i) => album('r' + i, 'R' + i, ['Rock'], 1700));
-  const liked = [album('x', 'X', ['Jazz'], 1500)];
+test('liked albums pull in the same artists and keep one random slot', () => {
+  const miles = Array.from({ length: 10 }, (_, i) => album('m' + i, 'Miles Davis'));
+  const others = Array.from({ length: 40 }, (_, i) => album('o' + i));
+  const liked = [album('x', 'Miles Davis')];
   for (let s = 1; s <= 20; s++) {
-    const { albums } = pick([...jazz, ...rock], { liked, rng: seeded(s) });
-    assert.ok(albums.filter((a) => a.genres[0] === 'Jazz').length >= 5);
+    const { albums } = pick([...miles, ...others], { liked, rng: seeded(s) });
+    assert.ok(albums.filter((a) => a.artist === 'Miles Davis').length >= 5);
   }
 });
 
-test('with no similar albums, liked falls back to random', () => {
-  const liked = [album('x', 'Nobody', ['Polka'], 0)];
-  const { albums } = pick(pool, { liked, rng: seeded() });
+test('with no other albums by the liked artists, the pick is random', () => {
+  const { albums } = pick(pool, { liked: [album('x', 'Nobody')], rng: seeded() });
   assert.equal(albums.length, 6);
+});
+
+test('deal keeps picked albums in their slots and refills the rest without repeats', () => {
+  const shown = pool.slice(0, 6);
+  const keep = new Set(['1', '4']);
+  const seen = shown.map((a) => a.id);
+  const { albums, fresh, reset } = deal(pool, { shown, keep, seen, rng: seeded() });
+  assert.equal(reset, false);
+  assert.equal(albums.length, 6);
+  assert.equal(albums[1], shown[1]);
+  assert.equal(albums[4], shown[4]);
+  assert.equal(fresh.length, 4);
+  assert.ok(fresh.every((a) => !seen.includes(a.id)));
+});
+
+test('deal with nothing kept is a fresh pick', () => {
+  const { albums, fresh } = deal(pool, { shown: pool.slice(0, 6), rng: seeded() });
+  assert.equal(albums.length, 6);
+  assert.equal(albums, fresh);
+});
+
+test('deal never repeats a kept album, even after a reset', () => {
+  const shown = pool.slice(0, 6);
+  const keep = new Set(['0', '1', '2']);
+  const seen = pool.slice(0, 28).map((a) => a.id); // only two unseen left
+  const { albums, reset } = deal(pool, { shown, keep, seen, rng: seeded() });
+  assert.equal(reset, true);
+  assert.equal(new Set(albums.map((a) => a.id)).size, 6);
+});
+
+test('deal with every album kept changes nothing', () => {
+  const shown = pool.slice(0, 6);
+  const { albums, fresh } = deal(pool, { shown, keep: new Set(shown.map((a) => a.id)), rng: seeded() });
+  assert.deepEqual(albums, shown);
+  assert.equal(fresh.length, 0);
 });

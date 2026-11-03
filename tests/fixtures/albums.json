@@ -5,20 +5,18 @@
       "attributes": { "title": "Kind of Blue", "releaseDate": "1959-08-17", "barcodeId": "886976903328", "popularity": 0.8, "numberOfItems": 6, "albumType": "ALBUM" },
       "relationships": {
         "artists": { "data": [{ "id": "a1", "type": "artists" }] },
-        "genres": { "data": [{ "id": "g1", "type": "genres" }] },
         "coverArt": { "data": [{ "id": "c1", "type": "artworks" }] }
       }
     },
     {
       "id": "1002", "type": "albums",
       "attributes": { "title": "Discovery", "releaseDate": "2001-03-12" },
-      "relationships": { "artists": { "data": [{ "id": "a2", "type": "artists" }] }, "genres": { "data": [] } }
+      "relationships": { "artists": { "data": [{ "id": "a2", "type": "artists" }] } }
     }
   ],
   "included": [
     { "id": "a1", "type": "artists", "attributes": { "name": "Miles Davis", "popularity": 0.9 } },
     { "id": "a2", "type": "artists", "attributes": { "name": "Daft Punk", "popularity": 0.9 } },
-    { "id": "g1", "type": "genres", "attributes": { "genreName": "Jazz" } },
     { "id": "c1", "type": "artworks", "attributes": { "mediaType": "IMAGE", "files": [
       { "href": "https://resources.tidal.com/images/x/160x160.jpg", "meta": { "width": 160, "height": 160 } },
       { "href": "https://resources.tidal.com/images/x/640x640.jpg", "meta": { "width": 640, "height": 640 } },

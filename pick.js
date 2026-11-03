@@ -1,6 +1,6 @@
 // Choosing albums. Pure functions only; tested in tests/pick.test.js.
 //
-// An album is { id, title, artist, year, genres: string[], cover: string | null }.
+// An album is { id, title, artist, year, cover: string | null }.
 
 /** Local calendar day, e.g. "2026-11-03". Albums shown today aren't shown again until tomorrow. */
 export function dayKey(d = new Date()) {
@@ -8,62 +8,47 @@ export function dayKey(d = new Date()) {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 
-/** How alike two albums are: same artist counts most, then shared genres, then era. 0 means unrelated. */
-export function likeness(a, b) {
-  let s = 0;
-  if (a.artist && a.artist === b.artist) s += 3;
-  const g = new Set(a.genres ?? []);
-  for (const x of b.genres ?? []) if (g.has(x)) s += 2;
-  if (a.year && b.year) {
-    const d = Math.abs(a.year - b.year);
-    if (d <= 3) s += 1;
-    else if (d <= 8) s += 0.5;
-  }
-  return s;
-}
-
-/** Removes and returns one item, chosen with probability proportional to its weight. */
-function takeWeighted(items, weights, rng) {
-  const total = weights.reduce((t, w) => t + w, 0);
-  let r = rng() * total;
-  let i = 0;
-  while (i < items.length - 1 && (r -= weights[i]) >= 0) i++;
-  weights.splice(i, 1);
-  return items.splice(i, 1)[0];
-}
-
 /**
- * Picks `n` albums from `pool`, skipping ids in `seen`.
- * With no `liked` albums the pick is uniformly random. With some, up to n - 1 slots go to
- * albums like them (weighted by likeness) and the rest stay random, so there's always a wildcard.
- * If fewer than `n` unseen albums are left, `reset` is true and the pick ignores `seen`.
+ * Picks `n` albums from `pool`, skipping ids in `seen`. Uniformly random, except that with
+ * `liked` albums, up to n - 1 slots go to other albums by the same artists; there's always a wildcard.
+ * If fewer than `n` unseen albums are left, `reset` is true and the pick ignores `seen`
+ * (but still never repeats a liked album).
  */
 export function pick(pool, { n = 6, seen = [], liked = [], rng = Math.random } = {}) {
   const skip = new Set(seen);
   let rest = pool.filter((a) => !skip.has(a.id));
-  let reset = false;
-  if (rest.length < n) {
-    reset = true;
+  const reset = rest.length < n;
+  if (reset) {
     const now = new Set(liked.map((a) => a.id));
     rest = pool.filter((a) => !now.has(a.id));
   }
-  rest = rest.slice();
+  const take = (list) => list.splice(Math.floor(rng() * list.length), 1)[0];
+  const artists = new Set(liked.map((a) => a.artist));
+  const same = rest.filter((a) => artists.has(a.artist));
+  rest = rest.filter((a) => !artists.has(a.artist));
   const out = [];
-  if (liked.length) {
-    const near = [];
-    const weights = [];
-    for (const a of rest) {
-      const w = Math.max(...liked.map((l) => likeness(l, a)));
-      if (w > 0) { near.push(a); weights.push(w); }
-    }
-    while (out.length < n - 1 && near.length) out.push(takeWeighted(near, weights, rng));
-    const taken = new Set(out.map((a) => a.id));
-    rest = rest.filter((a) => !taken.has(a.id));
-  }
-  while (out.length < n && rest.length) out.push(rest.splice(Math.floor(rng() * rest.length), 1)[0]);
+  while (out.length < n - 1 && same.length) out.push(take(same));
+  rest.push(...same);
+  while (out.length < n && rest.length) out.push(take(rest));
   for (let i = out.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));
     [out[i], out[j]] = [out[j], out[i]];
   }
   return { albums: out, reset };
+}
+
+/**
+ * The next deal. Albums in `shown` whose id is in `keep` stay in their slots; the other slots
+ * get albums by the same artists where there are any (see pick), never repeating a kept one.
+ * Returns `fresh`, the new albums only, so the caller can mark them seen.
+ */
+export function deal(pool, { shown = [], keep = new Set(), n = 6, seen = [], rng = Math.random } = {}) {
+  const kept = shown.filter((a) => keep.has(a.id));
+  const { albums: fresh, reset } = pick(pool, {
+    n: n - kept.length, seen: [...seen, ...kept.map((a) => a.id)], liked: kept, rng,
+  });
+  if (!kept.length) return { albums: fresh, fresh, reset };
+  let i = 0;
+  const albums = shown.map((a) => (keep.has(a.id) ? a : fresh[i++])).concat(fresh.slice(i)).filter(Boolean);
+  return { albums, fresh, reset };
 }

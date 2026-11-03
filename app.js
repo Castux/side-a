@@ -1,5 +1,5 @@
 import { REDIRECT_URI, TIDAL_CLIENT_ID } from './config.js';
-import { dayKey, pick } from './pick.js';
+import { dayKey, deal as nextDeal } from './pick.js';
 import { albumUrl, AuthError, beginLogin, finishLogin, isLoggedIn, logOut, syncCollection } from './tidal.js';
 
 const N = 6;
@@ -100,15 +100,10 @@ function renderConnect(error) {
 
 // Picked sleeves stay where they are (still picked); the other slots get albums like them.
 function deal() {
-  const kept = shown.filter((a) => picked.has(a.id));
-  const keptIds = kept.map((a) => a.id);
-  const { albums: fresh, reset } = pick(albums, { n: N - kept.length, seen: [...seenToday(), ...keptIds], liked: kept });
+  const { albums: next, fresh, reset } = nextDeal(albums, { shown, keep: picked, n: N, seen: seenToday() });
   markSeen(fresh.map((a) => a.id), reset);
   note = reset ? 'You’ve seen every album today, so these are repeats.' : '';
-  let i = 0;
-  shown = kept.length
-    ? [...shown.map((a) => (picked.has(a.id) ? a : fresh[i++])), ...fresh.slice(i)].filter(Boolean)
-    : fresh;
+  shown = next;
   render();
 }
 
