@@ -1,0 +1,11 @@
+{
+  "data": [
+    { "id": "1001", "type": "albums", "meta": { "addedAt": "2026-10-30T07:12:00Z" } },
+    { "id": "1002", "type": "albums", "meta": { "addedAt": "2026-09-01T18:00:00Z" } }
+  ],
+  "links": {
+    "self": "/userCollectionAlbums/me/relationships/items",
+    "next": "/userCollectionAlbums/me/relationships/items?page[cursor]=abc",
+    "meta": { "nextCursor": "abc" }
+  }
+}

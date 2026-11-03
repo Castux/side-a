@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+.env.local
+.cache/
+data/acousticbrainz/
+*.log
+.DS_Store
