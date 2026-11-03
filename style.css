@@ -26,7 +26,7 @@ main{max-width:1080px;margin:0 auto;padding:0 1.25rem}
 .hello{padding:1.75rem 0 .75rem}
 .hello h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.2rem,7vw,3.6rem);line-height:1.02;letter-spacing:-.02em;margin:0}
 .hello .date{color:var(--ink-2);margin:.4rem 0 0}
-.reading{margin:0;font-size:1.05rem;max-width:40rem}
+.note{margin:0;font-size:1.05rem;max-width:40rem}
 
 /* Six sleeves: three by two on phones, one row from 900px */
 .table{list-style:none;margin:1.25rem 0 1rem;padding:1rem .25rem .5rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem .9rem}

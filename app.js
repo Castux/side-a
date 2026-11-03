@@ -56,7 +56,7 @@ function render() {
   const date = new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
   $('#app').innerHTML = `
     <section class="hello"><h1>${greet()}.</h1><p class="date">${esc(date)}</p></section>
-    <p class="reading">${esc(note || 'Six from your collection. Tap any that suit your mood to get more like them, or press Play.')}</p>
+    ${note ? `<p class="note">${esc(note)}</p>` : ''}
     <ol class="table">${shown.map(card).join('')}</ol>
     <div class="actions">
       <button class="btn primary" data-action="more"></button>
