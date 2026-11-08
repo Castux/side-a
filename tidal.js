@@ -1,22 +1,31 @@
-// Tidal login (OAuth 2 + PKCE, no client secret) and the two API calls Side A needs.
+// Tidal login (OAuth 2 + PKCE, no client secret) and the API calls Side A needs.
 // Endpoints from Tidal's OpenAPI spec (@tidal-music/api 0.56.0); see docs/HANDOVER.md for what's verified live.
 
 const AUTHORIZE_URL = 'https://login.tidal.com/authorize';
 const TOKEN_URL = 'https://auth.tidal.com/v1/oauth2/token';
 const API = 'https://openapi.tidal.com/v2';
-const SCOPES = 'collection.read';
+// Saving albums needs collection.write; the personal mixes need recommendations.read.
+const SCOPES = 'collection.read collection.write recommendations.read';
 const TOKEN_KEY = 'sideA.token';
 const PENDING_KEY = 'sideA.pending';
 
 /* ---------- Pure parsers (tested in tests/tidal.test.js) ---------- */
 
-/** GET /userCollectionAlbums/me/relationships/items → album ids and the cursor for the next page. */
-export function parseCollectionPage(doc) {
+/** A page of resource ids of one type (collection items, similar albums, mix tracks) and the next cursor. */
+export function parseIds(doc, type = 'albums') {
   const data = Array.isArray(doc?.data) ? doc.data : [];
   return {
-    ids: data.filter((d) => d.type === 'albums').map((d) => d.id),
+    ids: data.filter((d) => d.type === type).map((d) => d.id),
     next: doc?.links?.meta?.nextCursor ?? null,
   };
+}
+
+/** GET /tracks?filter[id]=…&include=albums → each track's album id, in order. */
+export function parseTrackAlbums(doc) {
+  const data = Array.isArray(doc?.data) ? doc.data : [];
+  return data.filter((t) => t.type === 'tracks')
+    .map((t) => [t.relationships?.albums?.data ?? []].flat().find((a) => a?.type === 'albums')?.id)
+    .filter(Boolean);
 }
 
 /** The smallest artwork file at least `min` px wide, else the largest there is. */
@@ -42,6 +51,8 @@ export function parseAlbums(doc) {
     artist: rel(r, 'artists').map((a) => a.attributes?.name).filter(Boolean).join(', ') || 'Unknown artist',
     year: Number(String(r.attributes?.releaseDate ?? '').slice(0, 4)) || 0,
     cover: pickCover(rel(r, 'coverArt')[0]),
+    type: r.attributes?.albumType ?? '',
+    copyright: r.attributes?.copyright?.text ?? '',
   }));
 }
 
@@ -122,19 +133,84 @@ async function accessToken(clientId) {
 
 /* ---------- API ---------- */
 
-async function get(clientId, path, query, attempt = 0) {
+/** The token lacks a scope (logged in before saving or mixes were added): log in again. */
+export class ScopeError extends Error {}
+
+async function request(clientId, method, path, query = {}, body, attempt = 0) {
   const q = new URLSearchParams();
   for (const [k, v] of Object.entries(query)) if (v != null) for (const x of [].concat(v)) q.append(k, x);
-  const res = await fetch(`${API}${path}?${q}`, {
-    headers: { Authorization: `Bearer ${await accessToken(clientId)}`, Accept: 'application/vnd.api+json' },
+  const res = await fetch(`${API}${path}${q.size ? `?${q}` : ''}`, {
+    method,
+    headers: {
+      Authorization: `Bearer ${await accessToken(clientId)}`,
+      Accept: 'application/vnd.api+json',
+      ...(body && { 'Content-Type': 'application/vnd.api+json' }),
+    },
+    body: body && JSON.stringify(body),
   });
   if (res.status === 429 && attempt < 4) {
     await new Promise((r) => setTimeout(r, (Number(res.headers.get('Retry-After')) || 2 ** attempt) * 1000));
-    return get(clientId, path, query, attempt + 1);
+    return request(clientId, method, path, query, body, attempt + 1);
   }
   if (res.status === 401) { logOut(); throw new AuthError('Session expired'); }
+  if (res.status === 403) throw new ScopeError(`Tidal refused ${path}: log in again to allow it`);
   if (!res.ok) throw new Error(`Tidal API ${res.status} on ${path}`);
-  return res.json();
+  return res.status === 204 ? null : res.json().catch(() => null);
+}
+const get = (clientId, path, query) => request(clientId, 'GET', path, query);
+
+/** Pages through a list of ids of one type, up to `limit`. */
+async function allIds(clientId, path, type, query = {}, limit = Infinity) {
+  const ids = [];
+  let cursor = null;
+  do {
+    const page = parseIds(await get(clientId, path, { ...query, 'page[cursor]': cursor }), type);
+    ids.push(...page.ids);
+    cursor = page.next;
+  } while (cursor && ids.length < limit);
+  return ids.slice(0, limit);
+}
+
+/** Album details in Side A's shape, 20 per request. `onBatch(done)` reports progress. Missing albums are skipped. */
+export async function fetchAlbums(clientId, ids, onBatch = () => {}) {
+  const out = [];
+  for (let i = 0; i < ids.length; i += 20) {
+    const doc = await get(clientId, '/albums', {
+      'filter[id]': ids.slice(i, i + 20), include: ['artists', 'coverArt'],
+    });
+    out.push(...parseAlbums(doc));
+    onBatch(Math.min(i + 20, ids.length));
+  }
+  return out;
+}
+
+/** Ids of the albums Tidal lists as similar to this one (first page only). */
+export async function similarAlbumIds(clientId, id) {
+  return parseIds(await get(clientId, `/albums/${encodeURIComponent(id)}/relationships/similarAlbums`, {})).ids;
+}
+
+/** The albums these tracks are on, without repeats, in order. */
+async function trackAlbumIds(clientId, trackIds) {
+  const out = [];
+  for (let i = 0; i < trackIds.length; i += 20) {
+    out.push(...parseTrackAlbums(await get(clientId, '/tracks', { 'filter[id]': trackIds.slice(i, i + 20), include: 'albums' })));
+  }
+  return [...new Set(out)];
+}
+
+/** Albums of the most recently liked tracks. */
+export async function likedTrackAlbumIds(clientId, limit = 200) {
+  return trackAlbumIds(clientId, await allIds(clientId, '/userCollectionTracks/me/relationships/items', 'tracks', { sort: '-addedAt' }, limit));
+}
+
+/** Albums of the tracks in one of the user's Tidal mixes: userDailyMixes, userDiscoveryMixes or userNewReleaseMixes. */
+export async function mixAlbumIds(clientId, mix) {
+  return trackAlbumIds(clientId, parseIds(await get(clientId, `/${mix}/me/relationships/items`, {}), 'tracks').ids);
+}
+
+/** Adds an album to the user's Tidal collection, or removes it with `save = false`. */
+export async function saveAlbum(clientId, id, save = true) {
+  await request(clientId, save ? 'POST' : 'DELETE', '/userCollectionAlbums/me/relationships/items', {}, { data: [{ id, type: 'albums' }] });
 }
 
 /**
@@ -142,25 +218,14 @@ async function get(clientId, path, query, attempt = 0) {
  * Returns the full list in collection order (newest first). `onProgress(text)` reports how far it got.
  */
 export async function syncCollection(clientId, known, onProgress = () => {}) {
-  const ids = [];
-  let cursor = null;
-  do {
-    const page = parseCollectionPage(await get(clientId, '/userCollectionAlbums/me/relationships/items', {
-      sort: '-addedAt', 'page[cursor]': cursor,
-    }));
-    ids.push(...page.ids);
-    cursor = page.next;
-    onProgress(`Found ${ids.length} albums…`);
-  } while (cursor);
+  const ids = await allIds(clientId, '/userCollectionAlbums/me/relationships/items', 'albums', { sort: '-addedAt' });
+  onProgress(`Found ${ids.length} albums…`);
 
-  const byId = new Map(known.map((a) => [a.id, a]));
+  // Albums cached before `copyright` was kept are fetched again once (the kids filter reads it).
+  const byId = new Map(known.filter((a) => 'copyright' in a).map((a) => [a.id, a]));
   const missing = ids.filter((id) => !byId.has(id));
-  for (let i = 0; i < missing.length; i += 20) {
-    const doc = await get(clientId, '/albums', {
-      'filter[id]': missing.slice(i, i + 20), include: ['artists', 'coverArt'],
-    });
-    for (const a of parseAlbums(doc)) byId.set(a.id, a);
-    onProgress(`Loaded ${ids.length - missing.length + Math.min(i + 20, missing.length)} of ${ids.length} albums…`);
-  }
+  const have = ids.length - missing.length;
+  const fetched = await fetchAlbums(clientId, missing, (done) => onProgress(`Loaded ${have + done} of ${ids.length} albums…`));
+  for (const a of fetched) byId.set(a.id, a);
   return ids.map((id) => byId.get(id)).filter(Boolean);
 }

@@ -2,7 +2,7 @@
   "data": [
     {
       "id": "1001", "type": "albums",
-      "attributes": { "title": "Kind of Blue", "releaseDate": "1959-08-17", "barcodeId": "886976903328", "popularity": 0.8, "numberOfItems": 6, "albumType": "ALBUM" },
+      "attributes": { "title": "Kind of Blue", "releaseDate": "1959-08-17", "barcodeId": "886976903328", "popularity": 0.8, "numberOfItems": 6, "albumType": "ALBUM", "copyright": { "text": "℗ 1959 Columbia Records" } },
       "relationships": {
         "artists": { "data": [{ "id": "a1", "type": "artists" }] },
         "coverArt": { "data": [{ "id": "c1", "type": "artworks" }] }
