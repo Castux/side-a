@@ -2,6 +2,8 @@
 
 Six random albums from your Tidal collection to start the day. Tap any that suit your mood to keep them and fill the rest with more like them, or press Play to open one in Tidal. Albums you’ve seen today don’t come back until tomorrow.
 
+The sparkle icon flips to **new to you**: six albums you haven’t saved yet, from what you play and like and from albums like your favourites, never children’s music. ♥ saves one to your Tidal collection; ✕ says “not for me” or “kids’ music”, and it learns from both.
+
 Live at <https://castux.github.io/side-a/>. A static page with no build step and no dependencies; your Tidal login and album list stay in your browser.
 
 ## Run it
