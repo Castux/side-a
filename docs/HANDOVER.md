@@ -42,7 +42,7 @@ In both modes, albums shown today don’t come back until tomorrow.
 
 **How a new-mode deal works** (`recommend()`): up to 3 slots (1 when something is picked) go to albums she already knows (liked tracks, daily mixes), random order. The rest come from weighted candidates: albums similar to the seeds (picked 3×, loved 2×, saved or liked 1×; 8 seeds when nothing is picked, else the picked ones plus 2), plus Tidal’s discovery and new-release mixes at weight 1. Details are fetched best-first, skipping kids’ albums, singles, blocked artists and repeats of an artist. If that runs short, more known albums fill in. The six are shuffled so the known ones don’t always lead.
 
-**Sources** are gathered once a day on the first deal: the albums of her 200 most recently liked tracks and of her daily, discovery and new-release mixes. A source that fails is skipped; a 403 (token from before the new scopes) shows “Log in again” and isn’t cached.
+**Sources** are gathered once a day on the first deal: the albums of her 200 most recently liked tracks and, with the `recommendations.read` scope, of her daily, discovery and new-release mixes. A source that fails is skipped; a 403 (token from before the new scopes) shows “Log in again” and isn’t cached.
 
 **Kids filter:** Tidal’s genres are empty, so `kids.js` matches words: kids’ phrases in English, Finnish, Swedish, Danish, Norwegian, German, Dutch, French, Spanish and Italian, plus brands (Disney, Pinkfong, Cocomelon, Hevisaurus…). Against the owner’s 576 albums it flagged all ten kids’ albums and nothing else. Disney in the copyright line also drops Star Wars, Marvel and Tron soundtracks, on purpose. Her “Kids’ music” flags catch what words can’t. When something common slips through, add a pattern and a test case.
 
@@ -63,7 +63,7 @@ In both modes, albums shown today don’t come back until tomorrow.
 
 ## Tidal API
 
-Base `https://openapi.tidal.com/v2`, JSON:API (`Accept: application/vnd.api+json`), paging via `links.meta.nextCursor` → `page[cursor]`. Login: `https://login.tidal.com/authorize`, token `https://auth.tidal.com/v1/oauth2/token`, scopes `collection.read collection.write recommendations.read` (all enabled on the Tidal app). Reference: <https://tidal-music.github.io/tidal-api-reference/>.
+Base `https://openapi.tidal.com/v2`, JSON:API (`Accept: application/vnd.api+json`), paging via `links.meta.nextCursor` → `page[cursor]`. Login: `https://login.tidal.com/authorize`, token `https://auth.tidal.com/v1/oauth2/token`, scopes from `TIDAL_SCOPES` in `config.js`, currently `collection.read collection.write`. Every scope requested must be enabled on the Tidal app, or Tidal’s login page fails with error 1002 (8 Nov 2026: asking for `recommendations.read` broke login). The mixes are only fetched when `recommendations.read` is in the list. Reference: <https://tidal-music.github.io/tidal-api-reference/>.
 
 | Purpose | Request |
 |---|---|

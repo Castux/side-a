@@ -4,8 +4,6 @@
 const AUTHORIZE_URL = 'https://login.tidal.com/authorize';
 const TOKEN_URL = 'https://auth.tidal.com/v1/oauth2/token';
 const API = 'https://openapi.tidal.com/v2';
-// Saving albums needs collection.write; the personal mixes need recommendations.read.
-const SCOPES = 'collection.read collection.write recommendations.read';
 const TOKEN_KEY = 'sideA.token';
 const PENDING_KEY = 'sideA.pending';
 
@@ -77,13 +75,13 @@ const saveToken = (json, old) => {
 export const isLoggedIn = () => !!readToken();
 export const logOut = () => localStorage.removeItem(TOKEN_KEY);
 
-export async function beginLogin({ clientId, redirectUri }) {
+export async function beginLogin({ clientId, redirectUri, scopes }) {
   const verifier = randomString(32);
   const challenge = b64url(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier))));
   const state = randomString(16);
   sessionStorage.setItem(PENDING_KEY, JSON.stringify({ verifier, state }));
   const q = new URLSearchParams({
-    response_type: 'code', client_id: clientId, redirect_uri: redirectUri, scope: SCOPES,
+    response_type: 'code', client_id: clientId, redirect_uri: redirectUri, scope: scopes,
     code_challenge_method: 'S256', code_challenge: challenge, state,
   });
   location.assign(`${AUTHORIZE_URL}?${q}`);

@@ -1,4 +1,4 @@
-import { REDIRECT_URI, TIDAL_CLIENT_ID } from './config.js';
+import { REDIRECT_URI, TIDAL_CLIENT_ID, TIDAL_SCOPES } from './config.js';
 import { dayKey, deal as nextDeal } from './pick.js';
 import { recommend } from './recommend.js';
 import { judge, lessons } from './taste.js';
@@ -11,7 +11,8 @@ const N = 6;
 const RESYNC_MS = 60 * 60 * 1000; // refresh the collection at most hourly, and only after you've used the page
 const demo = new URLSearchParams(location.search).has('demo');
 const KEY = demo ? 'sideA.demo.' : 'sideA.';
-const tidal = { clientId: TIDAL_CLIENT_ID, redirectUri: REDIRECT_URI };
+const tidal = { clientId: TIDAL_CLIENT_ID, redirectUri: REDIRECT_URI, scopes: TIDAL_SCOPES };
+const mixes = TIDAL_SCOPES.split(' ').includes('recommendations.read');
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
@@ -177,6 +178,7 @@ async function similar(id) {
 /**
  * Album ids from her liked tracks and Tidal mixes, gathered once a day. `known` are albums she
  * already plays (liked tracks, daily mixes); `extra` are Tidal's picks (discovery, new releases).
+ * The mixes need the recommendations.read scope (see config.js) and are skipped without it.
  * A source that fails is skipped; one that needs a new scope asks her to log in again.
  */
 async function dailySources() {
@@ -195,9 +197,9 @@ async function dailySources() {
   };
   const [liked, daily, discovery, releases] = await Promise.all([
     from('From your liked tracks', () => likedTrackAlbumIds(TIDAL_CLIENT_ID)),
-    from('From your daily mix', () => mixAlbumIds(TIDAL_CLIENT_ID, 'userDailyMixes')),
-    from('From your discovery mix', () => mixAlbumIds(TIDAL_CLIENT_ID, 'userDiscoveryMixes')),
-    from('New release for you', () => mixAlbumIds(TIDAL_CLIENT_ID, 'userNewReleaseMixes')),
+    mixes ? from('From your daily mix', () => mixAlbumIds(TIDAL_CLIENT_ID, 'userDailyMixes')) : [],
+    mixes ? from('From your discovery mix', () => mixAlbumIds(TIDAL_CLIENT_ID, 'userDiscoveryMixes')) : [],
+    mixes ? from('New release for you', () => mixAlbumIds(TIDAL_CLIENT_ID, 'userNewReleaseMixes')) : [],
   ]);
   const once = (list) => [...new Map(list.map((x) => [x.id, x])).values()];
   const sources = { day: dayKey(), known: once([...liked, ...daily]), extra: once([...discovery, ...releases]), missingScope };
@@ -229,7 +231,7 @@ async function dealNew() {
     });
     markSeen(v.seenKey, fresh.map((a) => a.id));
     v.login = missingScope;
-    v.note = missingScope ? 'Log in again to let Side A use your liked tracks and Tidal mixes.'
+    v.note = missingScope ? 'Log in again to let Side A use your liked tracks.'
       : fresh.length ? '' : 'No new albums turned up this time. Try again.';
     if (fresh.length) {
       v.shown = next;
